@@ -41,7 +41,7 @@ public class SWTBigWindow {
                 nameItem.setText("Name: " + i.getName());
 
                 TreeItem descItem = new TreeItem(iItem, 0);
-                nameItem.setText("Short decription: " + i.getDesc());
+                descItem.setText("Short decription: " + i.getDesc());
 
                 TreeItem numbItem = new TreeItem(iItem, 0);
                 numbItem.setText("Count of items: " + i.getNumber());
