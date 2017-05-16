@@ -1,14 +1,8 @@
 package com.company;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import java.util.LinkedHashMap;
@@ -25,7 +19,8 @@ public class SWTBigWindow {
         shell.setLocation(120, 120);
         shell.setSize (960, 540);
         shell.setLayout(new FormLayout());
-        //Color my = new Color(shell.getDisplay(), 0, 0, 255);
+        Color my = new Color(shell.getDisplay(), 252, 15, 192);
+        shell.setBackground(my);
 
 
         //                              TREE
@@ -54,20 +49,41 @@ public class SWTBigWindow {
 
         //                              TOOLBAR
 
-        ToolBar bar = new ToolBar (shell, SWT.FLAT | SWT.WRAP | SWT.CENTER);
+        ToolBar bar = new ToolBar (shell, SWT.BORDER);
         FormData tooldata = new FormData();
-        tooldata.bottom = new FormAttachment(98);
+        tooldata.bottom = new FormAttachment(100);
         tooldata.top = new FormAttachment(92);
         tooldata.left = new FormAttachment(24);
-        tooldata.right = new FormAttachment(76);
-        for (int i=0; i<9; i++) {
-            ToolItem item = new ToolItem (bar, SWT.PUSH|SWT.FILL);
-            item.setText ("Item " + i);
-        }
+        tooldata.right = new FormAttachment(90);;
+
+
+        //                              TOOLITEMS
+        ToolItem insert = new ToolItem(bar, SWT.PUSH);
+        insert.setText("Insert");
+        insert.setToolTipText("Write at leat element's name so you can add it to collection");
+
+        ToolItem remove = new ToolItem(bar, SWT.PUSH);
+        remove.setText("Remove");
+        remove.setToolTipText("Removes selected element");
+
+        ToolItem reload = new ToolItem(bar, SWT.PUSH);
+        reload.setText("Reload");
+        reload.setToolTipText("Reload collection from file");
+        ToolItem sort = new ToolItem(bar, SWT.PUSH);
+        sort.setText("Sort");
+        sort.setToolTipText("Sorts collection elements by name");
+        ToolItem import_ = new ToolItem(bar, SWT.PUSH);
+        import_.setText("Import");
+        import_.setToolTipText("Loads collection from file with choosing filepath");
+        ToolItem remove_l = new ToolItem(bar, SWT.PUSH);
+        remove_l.setText("Remove Lower");
+        remove_l.setToolTipText("Removes elements which ket smaller than specified key");
+
+
         bar.setLayoutData(tooldata);
         bar.pack();
-        //bar.setBackground(my);
-
+        bar.setBackground(my);
+        shell.setMinimumSize(750,500);
 
         //                              SCALE
 
@@ -79,8 +95,6 @@ public class SWTBigWindow {
 
         Scale scale = new Scale (shell, SWT.BORDER);
         scale.setLayoutData(sc_data);
-        //Rectangle clientArea = shell.getClientArea ();
-        //scale.setBounds (clientArea.x, clientArea.y, 200, 64);
         scale.setMaximum (40);
         scale.setPageIncrement (5);
 
@@ -110,14 +124,11 @@ public class SWTBigWindow {
         spinner.setIncrement(1);
         spinner.setPageIncrement(5);
         spinner.setLayoutData(spin_data);
-        //Rectangle clientArea = shell.getClientArea();
-        //spinner.setLocation(clientArea.x, clientArea.y);
-        //spinner.pack();
 
 
         //                              TEXT DESC
 
-        final Text desc_text = new Text(shell, SWT.BORDER | SWT.MULTI);
+        final Text desc_text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.WRAP);
         FormData desc_text_data = new FormData();
         desc_text_data.top = new FormAttachment(70);
         desc_text_data.bottom = new FormAttachment(85);
@@ -132,14 +143,14 @@ public class SWTBigWindow {
         desc_label.setText("Short \ndescription:");
         FormData desc_lab_data = new FormData();
         desc_lab_data.right = new FormAttachment(12);
-        desc_lab_data.left = new FormAttachment(2);
+        desc_lab_data.left = new FormAttachment(1);
         desc_lab_data.top = new FormAttachment(76);
         desc_label.setLayoutData(desc_lab_data);
 
 
         //                              TEXT NAME
 
-        final Text name_text = new Text(shell, SWT.BORDER | SWT.MULTI);
+        final Text name_text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.WRAP );
         FormData name_text_data = new FormData();
         name_text_data.top = new FormAttachment(56);
         name_text_data.bottom = new FormAttachment(64);
@@ -154,7 +165,7 @@ public class SWTBigWindow {
         name_label.setText("Name:");
         FormData name_label_data = new FormData();
         name_label_data.right = new FormAttachment(12);
-        name_label_data.left = new FormAttachment(2);
+        name_label_data.left = new FormAttachment(1);
         name_label_data.top = new FormAttachment(59);
         name_label.setLayoutData(name_label_data);
 
@@ -165,6 +176,7 @@ public class SWTBigWindow {
         }
         display.dispose ();
     }
+
 }
 
 
