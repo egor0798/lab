@@ -13,7 +13,7 @@ class Item implements Comparable<Item>{
     public Item() {}
     public String getDesc() {   return desc;    }
     public int getNumber() {    return number;  }
-    public String getName() { return this.name;   }
+    public String getName() { return name;   }
     @Override
     public int compareTo(Item b){
         return this.getName().compareTo(b.getName());
