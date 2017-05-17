@@ -5,7 +5,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import java.util.LinkedHashMap;
 
 /**
  * Created by Sekvoya on 012 12.05.17.
@@ -30,7 +29,7 @@ public class SWTBigWindow {
         shell.setLocation(120, 120);
         shell.setSize(960, 540);
         shell.setLayout(new FormLayout());
-        Color my = new Color(shell.getDisplay(), 252, 15, 192);
+        Color my = new Color(shell.getDisplay(), 225, 252, 152);
         shell.setBackground(my);
 
 
@@ -53,66 +52,7 @@ public class SWTBigWindow {
         tooldata.top = new FormAttachment(92);
         tooldata.left = new FormAttachment(24);
         tooldata.right = new FormAttachment(90);
-        ;
 
-
-        //                              TOOLITEM
-        ToolItem insert = new ToolItem(bar, SWT.PUSH);
-        insert.setText("Insert");
-        insert.setToolTipText("Write at least element's name so you can add it to collection");
-        insert.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.type == SWT.Selection) {
-                        collect.put(name_text.getText(), new Item(name_text.getText(), spinner.getDigits(), desc_text.getText()));
-                }
-            }
-        });
-        
-        bar.setLayoutData(tooldata);
-        bar.pack();
-        bar.setBackground(new Color(shell.getDisplay(), mainRgb));
-        shell.setMinimumSize(750,500);
-
-        ToolItem remove = new ToolItem(bar, SWT.PUSH);
-        remove.setText("Remove");
-        remove.setToolTipText("Removes selected element");
-        remove.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.type == SWT.Selection) {
-                    curcol.remove((tree.getSelection()));
-                    //tree.get
-                }
-            }
-        });
-
-        ToolItem reload = new ToolItem(bar, SWT.PUSH);
-        reload.setText("Reload");
-        reload.setToolTipText("Reload collection from file");
-        reload.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.type == SWT.Selection) {
-                    curcol.load(path);
-                    fill_tree(tree, curcol);
-                    curcol.write();
-                }
-
-            }
-        });
-
-        ToolItem sort = new ToolItem(bar, SWT.PUSH);
-        sort.setText("Sort");
-        sort.setToolTipText("Sorts collection elements by name");
-
-        ToolItem import_ = new ToolItem(bar, SWT.PUSH);
-        import_.setText("Import");
-        import_.setToolTipText("Loads collection from file with choosing filepath");
-
-        ToolItem remove_l = new ToolItem(bar, SWT.PUSH);
-        remove_l.setText("Remove Lower");
-        remove_l.setToolTipText("Removes elements which ket smaller than specified key");
 
 
         bar.setLayoutData(tooldata);
@@ -155,7 +95,7 @@ public class SWTBigWindow {
 
         Spinner spinner = new Spinner(shell, SWT.BORDER);
         spinner.setMinimum(0);
-        spinner.setMaximum(100);
+        spinner.setMaximum(10000);
         spinner.setSelection(0);
         spinner.setIncrement(1);
         spinner.setPageIncrement(5);
@@ -204,6 +144,72 @@ public class SWTBigWindow {
         name_label_data.left = new FormAttachment(5);
         name_label_data.top = new FormAttachment(63,3);
         name_label.setLayoutData(name_label_data);
+
+
+        //                              TOOLITEM
+
+        ToolItem insert = new ToolItem(bar, SWT.PUSH);
+        insert.setText("Insert");
+        insert.setToolTipText("Write at least element's name so you can add it to collection");
+        insert.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.type == SWT.Selection) {
+                    curcol.put(name_text.getText(), new Item(name_text.getText(), spinner.getDigits(), desc_text.getText()));
+                    curcol.write();
+                    fill_tree(tree, curcol);
+                    name_text.setText("");
+                    desc_text.setText("");
+                    spinner.setSelection(0);
+
+                }
+
+            }
+        });
+
+        bar.setLayoutData(tooldata);
+        bar.pack();
+        shell.setMinimumSize(750,500);
+
+        ToolItem remove = new ToolItem(bar, SWT.PUSH);
+        remove.setText("Remove");
+        remove.setToolTipText("Removes selected element");
+        remove.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.type == SWT.Selection) {
+                    curcol.remove((tree.getSelection()));
+                    //tree.get
+                }
+            }
+        });
+
+        ToolItem reload = new ToolItem(bar, SWT.PUSH);
+        reload.setText("Reload");
+        reload.setToolTipText("Reload collection from file");
+        reload.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.type == SWT.Selection) {
+                    curcol.load(path);
+                    fill_tree(tree, curcol);
+                    curcol.write();
+                }
+
+            }
+        });
+
+        ToolItem sort = new ToolItem(bar, SWT.PUSH);
+        sort.setText("Sort");
+        sort.setToolTipText("Sorts collection elements by name");
+
+        ToolItem import_ = new ToolItem(bar, SWT.PUSH);
+        import_.setText("Import");
+        import_.setToolTipText("Loads collection from file with choosing filepath");
+
+        ToolItem remove_l = new ToolItem(bar, SWT.PUSH);
+        remove_l.setText("Remove Lower");
+        remove_l.setToolTipText("Removes elements which ket smaller than specified key");
 
 
         shell.open();
