@@ -56,10 +56,23 @@ public class SWTBigWindow {
         ;
 
 
-        //                              TOOLITEMS
+        //                              TOOLITEM
         ToolItem insert = new ToolItem(bar, SWT.PUSH);
         insert.setText("Insert");
-        insert.setToolTipText("Write at leat element's name so you can add it to collection");
+        insert.setToolTipText("Write at least element's name so you can add it to collection");
+        insert.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.type == SWT.Selection) {
+                        collect.put(name_text.getText(), new Item(name_text.getText(), spinner.getDigits(), desc_text.getText()));
+                }
+            }
+        });
+        
+        bar.setLayoutData(tooldata);
+        bar.pack();
+        bar.setBackground(new Color(shell.getDisplay(), mainRgb));
+        shell.setMinimumSize(750,500);
 
         ToolItem remove = new ToolItem(bar, SWT.PUSH);
         remove.setText("Remove");
@@ -109,9 +122,10 @@ public class SWTBigWindow {
 
         //                              SCALE
 
+        
         FormData sc_data = new FormData();
-        sc_data.left = new FormAttachment(72);
-        sc_data.right = new FormAttachment(90);
+        sc_data.left = new FormAttachment(68);
+        sc_data.right = new FormAttachment(85);
         sc_data.bottom = new FormAttachment(65);
         sc_data.top = new FormAttachment(60);
 
@@ -134,8 +148,8 @@ public class SWTBigWindow {
         //                              SPINNER
 
         FormData spin_data = new FormData();
-        spin_data.left = new FormAttachment(92);
-        spin_data.right = new FormAttachment(98);
+        spin_data.left = new FormAttachment(86);//непрочно
+        spin_data.right = new FormAttachment(95);
         // spin_data.bottom = new FormAttachment(65);
         spin_data.top = new FormAttachment(60);
 
@@ -151,8 +165,8 @@ public class SWTBigWindow {
         //                              TEXT DESC
 
         final Text desc_text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.WRAP);
-        FormData desc_text_data = new FormData();
-        desc_text_data.top = new FormAttachment(70);
+         FormData desc_text_data = new FormData();
+        desc_text_data.top = new FormAttachment(71);
         desc_text_data.bottom = new FormAttachment(85);
         desc_text_data.left = new FormAttachment(13);
         desc_text_data.right = new FormAttachment(60);
@@ -165,7 +179,7 @@ public class SWTBigWindow {
         desc_label.setText("Short \ndescription:");
         FormData desc_lab_data = new FormData();
         desc_lab_data.right = new FormAttachment(12);
-        desc_lab_data.left = new FormAttachment(1);
+        desc_lab_data.left = new FormAttachment(5);
         desc_lab_data.top = new FormAttachment(76);
         desc_label.setLayoutData(desc_lab_data);
 
@@ -174,8 +188,8 @@ public class SWTBigWindow {
 
         final Text name_text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.WRAP);
         FormData name_text_data = new FormData();
-        name_text_data.top = new FormAttachment(56);
-        name_text_data.bottom = new FormAttachment(64);
+        name_text_data.top = new FormAttachment(59,4);
+        name_text_data.bottom = new FormAttachment(70);
         name_text_data.left = new FormAttachment(13);
         name_text_data.right = new FormAttachment(60);
         name_text.setLayoutData(name_text_data);
@@ -183,12 +197,12 @@ public class SWTBigWindow {
 
         //                              TEXT NAME LABEL
 
-        Label name_label = new Label(shell, SWT.LEFT);
+       Label name_label = new Label(shell, SWT.LEFT);
         name_label.setText("Name:");
         FormData name_label_data = new FormData();
         name_label_data.right = new FormAttachment(12);
-        name_label_data.left = new FormAttachment(1);
-        name_label_data.top = new FormAttachment(59);
+        name_label_data.left = new FormAttachment(5);
+        name_label_data.top = new FormAttachment(63,3);
         name_label.setLayoutData(name_label_data);
 
 
