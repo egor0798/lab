@@ -12,12 +12,23 @@ import java.util.LinkedHashMap;
  */
 
 public class SWTBigWindow {
-    public static void Bigwin(Collection curcol) {
-        LinkedHashMap collect = curcol; // вот в этом и был весь косяк
-        Display display = new Display ();
-        Shell shell = new Shell (display);
+
+    private Collection curcol;
+    private static String path;
+    private Display display;
+    private Shell shell;
+
+    SWTBigWindow(String p, Collection col){
+        path = p;
+        curcol = col;
+
+    }
+
+    public void Bigwin() {
+        display = new Display();
+        shell = new Shell(display);
         shell.setLocation(120, 120);
-        shell.setSize (960, 540);
+        shell.setSize(960, 540);
         shell.setLayout(new FormLayout());
         Color my = new Color(shell.getDisplay(), 252, 15, 192);
         shell.setBackground(my);
@@ -25,36 +36,24 @@ public class SWTBigWindow {
 
         //                              TREE
 
-        final Tree tree = new Tree (shell, SWT.BORDER);
+        Tree tree = new Tree(shell, SWT.BORDER);
         FormData treeField = new FormData();
         treeField.left = new FormAttachment(5);
         treeField.right = new FormAttachment(95);
         treeField.top = new FormAttachment(3);
         treeField.bottom = new FormAttachment(50);
         tree.setLayoutData(treeField);
-
-        for (Item i: curcol.values()) {
-            TreeItem iItem = new TreeItem (tree, 0);
-            iItem.setText (i.getName()); //заголовок
-            TreeItem nameItem = new TreeItem(iItem, 0);
-            nameItem.setText("Name: " + i.getName());
-
-            TreeItem descItem = new TreeItem(iItem, 0);
-            descItem.setText("Short decription: " + i.getDesc());
-
-            TreeItem numbItem = new TreeItem(iItem, 0);
-            numbItem.setText("Count of items: " + i.getNumber());
-        }
-
+        fill_tree(tree, curcol);
 
         //                              TOOLBAR
 
-        ToolBar bar = new ToolBar (shell, SWT.BORDER);
+        ToolBar bar = new ToolBar(shell, SWT.BORDER);
         FormData tooldata = new FormData();
         tooldata.bottom = new FormAttachment(100);
         tooldata.top = new FormAttachment(92);
         tooldata.left = new FormAttachment(24);
-        tooldata.right = new FormAttachment(90);;
+        tooldata.right = new FormAttachment(90);
+        ;
 
 
         //                              TOOLITEMS
@@ -65,16 +64,39 @@ public class SWTBigWindow {
         ToolItem remove = new ToolItem(bar, SWT.PUSH);
         remove.setText("Remove");
         remove.setToolTipText("Removes selected element");
+        remove.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.type == SWT.Selection) {
+                    curcol.remove((tree.getSelection()));
+                    //tree.get
+                }
+            }
+        });
 
         ToolItem reload = new ToolItem(bar, SWT.PUSH);
         reload.setText("Reload");
         reload.setToolTipText("Reload collection from file");
+        reload.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.type == SWT.Selection) {
+                    curcol.load(path);
+                    fill_tree(tree, curcol);
+                    curcol.write();
+                }
+
+            }
+        });
+
         ToolItem sort = new ToolItem(bar, SWT.PUSH);
         sort.setText("Sort");
         sort.setToolTipText("Sorts collection elements by name");
+
         ToolItem import_ = new ToolItem(bar, SWT.PUSH);
         import_.setText("Import");
         import_.setToolTipText("Loads collection from file with choosing filepath");
+
         ToolItem remove_l = new ToolItem(bar, SWT.PUSH);
         remove_l.setText("Remove Lower");
         remove_l.setToolTipText("Removes elements which ket smaller than specified key");
@@ -83,7 +105,7 @@ public class SWTBigWindow {
         bar.setLayoutData(tooldata);
         bar.pack();
         bar.setBackground(my);
-        shell.setMinimumSize(750,500);
+        shell.setMinimumSize(750, 500);
 
         //                              SCALE
 
@@ -93,10 +115,10 @@ public class SWTBigWindow {
         sc_data.bottom = new FormAttachment(65);
         sc_data.top = new FormAttachment(60);
 
-        Scale scale = new Scale (shell, SWT.BORDER);
+        Scale scale = new Scale(shell, SWT.BORDER);
         scale.setLayoutData(sc_data);
-        scale.setMaximum (40);
-        scale.setPageIncrement (5);
+        scale.setMaximum(40);
+        scale.setPageIncrement(5);
 
 
         //                              SCALE LABEL
@@ -114,10 +136,10 @@ public class SWTBigWindow {
         FormData spin_data = new FormData();
         spin_data.left = new FormAttachment(92);
         spin_data.right = new FormAttachment(98);
-       // spin_data.bottom = new FormAttachment(65);
+        // spin_data.bottom = new FormAttachment(65);
         spin_data.top = new FormAttachment(60);
 
-        Spinner spinner = new Spinner (shell, SWT.BORDER);
+        Spinner spinner = new Spinner(shell, SWT.BORDER);
         spinner.setMinimum(0);
         spinner.setMaximum(100);
         spinner.setSelection(0);
@@ -150,7 +172,7 @@ public class SWTBigWindow {
 
         //                              TEXT NAME
 
-        final Text name_text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.WRAP );
+        final Text name_text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.WRAP);
         FormData name_text_data = new FormData();
         name_text_data.top = new FormAttachment(56);
         name_text_data.bottom = new FormAttachment(64);
@@ -172,27 +194,27 @@ public class SWTBigWindow {
 
         shell.open();
         while (!shell.isDisposed()) {
-            if (!display.readAndDispatch ()) display.sleep ();
+            if (!display.readAndDispatch()) display.sleep();
         }
-        display.dispose ();
+        display.dispose();
     }
 
+
+    public void fill_tree(Tree tr, Collection col) {
+        tr.clearAll(true);
+        tr.removeAll();
+        for (Item i : col.values()) {
+            TreeItem iItem = new TreeItem(tr, 0);
+            iItem.setText(i.getName()); //заголовок
+            TreeItem nameItem = new TreeItem(iItem, 0);
+            nameItem.setText("Name: " + i.getName());
+
+            TreeItem descItem = new TreeItem(iItem, 0);
+            descItem.setText("Short decription: " + i.getDesc());
+
+            TreeItem numbItem = new TreeItem(iItem, 0);
+            numbItem.setText("Count of items: " + i.getNumber());
+        }
+
+    }
 }
-
-
-
-/*Group gr = new Group(shell, SWT.NONE);
-        FormData group = new FormData();
-        group.left = new FormAttachment(10);
-        group.right = new FormAttachment(90);
-        group.top = new FormAttachment(70);
-        group.bottom = new FormAttachment(99);
-        gr.setLayoutData(group);*/
-
-
-//Button bar = new Button(shell, SWT.PUSH);
-//tooldata.left = new FormAttachment(gr, 10);
-//tooldata.right = new FormAttachment(gr, 10);
-//Rectangle clientArea = shell.getClientArea ();
-//bar.setLocation (clientArea.x, clientArea.y);/
-

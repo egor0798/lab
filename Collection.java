@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -27,33 +28,6 @@ class Collection extends LinkedHashMap<String, Item> {
     }
 
 
-    /**
-     * @author Egor
-     * @version 1.0
-     * @returns nothing
-     */
-    void help(){                                  //Method summary
-        System.out.println("\nYou can use commands:");
-        System.out.println("show - Show elements in collection ");
-        System.out.println("close - close program and save collection to file \"data.txt\" ");
-        System.out.println("insert {String key} {element} -  add new element with adjusted key");
-        System.out.println("import {String path} - fulfill collection with elements from file");
-        System.out.println("remove_lower {String key} - remove elements what key lower than adjusted");
-        System.out.println("load - re-read collection from file\n");
-        System.out.println("Write a command: ");
-    }
-
-    /**
-     * @author Egor
-     * @version 1.0
-     * @returns nothing
-     */
-    void show(){
-        if(this.isEmpty())
-            System.out.println("-----------\n\tCollection is empty");
-        for (String key : this.keySet())
-        System.out.println("key: " + key);
-    }
 
     /**
      * @author Egor
@@ -66,7 +40,6 @@ class Collection extends LinkedHashMap<String, Item> {
         try{
             ObjectMapper rd = new ObjectMapper();
             this.put(key, rd.readValue(element, Item.class));
-            System.out.println("-----------\n\tNew element added.");
         }catch (IOException e){
             System.out.println("Wrong object format!");
         }
@@ -84,9 +57,7 @@ class Collection extends LinkedHashMap<String, Item> {
             this.clear();
             ObjectMapper rd = new ObjectMapper();
             Item n;
-            if (in1.hasNextLine())
-                System.out.println("-----------\n\tLoading collection");
-            else
+            if (!in1.hasNextLine())
                 System.out.println("-----------\n\tFile is empty\n");
             while (in1.hasNextLine()) {
                 n = rd.readValue(in1.nextLine(), Item.class);
@@ -117,11 +88,26 @@ class Collection extends LinkedHashMap<String, Item> {
                 ar[i] = k;
                 i++;
             }
-        if(ar[0] != null )
-            System.out.println("-----------\n\tRemoving elements");
-        else
-            System.out.println("-----------\n\tNothing to remove");
         for (int j = 0; j < i; j++)
             this.keySet().remove(ar[j]);
+    }
+
+    /**
+     * @author Egor
+     * @version 1.0
+     * @returns nothing
+     */
+    void write (){
+        String path = "/home/egorka/Рабочий стол/file"; // Later need changing to getEnv
+        try(PrintWriter out = new PrintWriter(path);) {
+            ObjectMapper rd = new ObjectMapper();
+            String s;
+            for (String key : this.keySet()) {
+                s = rd.writeValueAsString(this.get(key));
+                out.append(s + "\n");
+            }
+        }catch (NullPointerException|IOException ex){
+            System.out.println("-----------\n\tSomething wrong with file, please check it and environment variable!");
+        }
     }
 }
