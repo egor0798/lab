@@ -47,10 +47,12 @@ public class SWT_try {
             ToolItem item = new ToolItem (bar, SWT.PUSH);
             item.setText ("Item " + i);
         }
+        //Button bar = new Button(shell, SWT.PUSH);
         FormData data3 = new FormData();
         data3.left = new FormAttachment(25);
         data3.right = new FormAttachment(75);
         data3.bottom = new FormAttachment(100,-5);
+        data3.top = new FormAttachment(95,-5);
         bar.setLayoutData(data3);
         Rectangle clientArea = shell.getClientArea ();
         bar.setLocation (clientArea.x, clientArea.y);

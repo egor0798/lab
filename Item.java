@@ -13,10 +13,25 @@ class Item implements Comparable<Item>{
     public Item() {}
     public String getDesc() {   return desc;    }
     public int getNumber() {    return number;  }
-    public String getName() { return this.name;   }
+    public String getName() { return name;   }
     @Override
     public int compareTo(Item b){
         return this.getName().compareTo(b.getName());
+    }
+    protected Item(String n){
+        name = n;
+        number = 1;
+        desc = "-";
+    }
+    protected Item(String n, int c){
+        name = n;
+        number = c;
+        desc = "-";
+    }
+    protected Item(String n, int c, String d){
+        name = n;
+        number = c;
+        desc = d;
     }
 }
 
