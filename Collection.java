@@ -3,9 +3,6 @@ package com.company;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,7 +13,7 @@ import java.util.*;
  */
 class Collection extends LinkedHashMap<String, Item> {
 
-    String mesg;
+    private String mesg;
     /**
      * @author Egor
      * @version 1.0
@@ -38,6 +35,7 @@ class Collection extends LinkedHashMap<String, Item> {
      * @param path - path to input file
      * @returns nothing
      */
+
     String load(String path){
         mesg = "Collection loaded.";
         try(Scanner in1 = new Scanner(new File(path))) {
@@ -57,6 +55,7 @@ class Collection extends LinkedHashMap<String, Item> {
         }
         return mesg;
     }
+
 
 
     /**
@@ -95,7 +94,7 @@ class Collection extends LinkedHashMap<String, Item> {
             String s;
             for (String key : this.keySet()) {
                 s = rd.writeValueAsString(this.get(key));
-                out.append(s + "\n");
+                out.append(s).append("\n");
             }
         }catch (NullPointerException|IOException ex){
             System.out.println("-----------\n\tSomething wrong with file, please check it and environment variable!");

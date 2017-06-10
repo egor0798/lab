@@ -13,14 +13,14 @@ import java.util.Map;
  * Created by Sekvoya on 012 12.05.17.
  */
 
-public class SWTBigWindow {
+class SWTBigWindow {
 
 
     private Collection curcol;
     private static String path;
     private Display display;
     private Shell shell;
-    String pressed;
+    private String pressed;
     SWTBigWindow(String p, Collection col){
         path = p;
         curcol = col;
@@ -36,7 +36,7 @@ public class SWTBigWindow {
         shell.setLayout(new FormLayout());
         Color my = new Color(shell.getDisplay(), 225, 252, 152);
         shell.setBackground(my);
-
+        shell.setText("Окно в Европу");
 
         //                              TREE
 
@@ -118,7 +118,7 @@ public class SWTBigWindow {
 
         //                              TEXT DESC
 
-        final Text desc_text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.WRAP);
+        final Text desc_text = new Text(shell, SWT.BORDER | SWT.FILL);
         FormData desc_text_data = new FormData();
         desc_text_data.top = new FormAttachment(71);
         desc_text_data.bottom = new FormAttachment(85);
@@ -140,7 +140,7 @@ public class SWTBigWindow {
 
         //                              TEXT NAME
 
-        final Text name_text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.WRAP);
+        final Text name_text = new Text(shell, SWT.BORDER | SWT.FILL);
         FormData name_text_data = new FormData();
         name_text_data.top = new FormAttachment(59,4);
         name_text_data.bottom = new FormAttachment(70);
@@ -173,12 +173,13 @@ public class SWTBigWindow {
             @Override
             public void handleEvent(Event event) {
                 if (event.type == SWT.Selection) {
-                    curcol.put(name_text.getText(), new Item(name_text.getText(), Integer.parseInt(spinner.getText()),              desc_text.getText()));
+                    curcol.put(name_text.getText().replaceAll("  ",""), new Item(name_text.getText().replaceAll("  ",""), Integer.parseInt(spinner.getText()), desc_text.getText().trim()));
                     curcol.write();
                     fill_tree(tree, curcol);
                     name_text.setText("");
                     desc_text.setText("");
                     spinner.setSelection(0);
+                    scale.setSelection(0);
                 }
             }
         });
@@ -190,7 +191,7 @@ public class SWTBigWindow {
         remove.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event)  {
-                if (event.type == SWT.Selection) {
+                if (event.type == SWT.Selection && tree.getSelectionCount() > 0 ) {
                     TreeItem t = tree.getSelection()[0];
                     String s = t.getItems()[0].toString();
                     s = s.substring(s.indexOf(':')+2, s.indexOf('}'));
@@ -244,9 +245,11 @@ public class SWTBigWindow {
                     String filterExt ="*.txt";
                     fd.setFileName(filterExt);
                     String selected = fd.open();
-                    msg.show(shell, curcol.load(selected));
-                    curcol.write();
-                    fill_tree(tree, curcol);
+                    if(selected != null) {
+                        msg.show(shell, curcol.load(selected));
+                        curcol.write();
+                        fill_tree(tree, curcol);
+                    }
                 }
 
             }
@@ -280,7 +283,7 @@ public class SWTBigWindow {
     }
 
 
-    public void fill_tree(Tree tr, Collection col) {
+    private void fill_tree(Tree tr, Collection col) {
         tr.clearAll(true);
         tr.removeAll();
         for (Item i : col.values()) {
