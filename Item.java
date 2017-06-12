@@ -1,9 +1,11 @@
 package com.company;
 
+import java.io.Serializable;
+
 /**
  * Created by User on 26.12.2016.
  */
-class Item implements Comparable<Item>{
+class Item implements Comparable<Item>, Serializable{
     private String desc; //Short description
     private String name;
     private int number;

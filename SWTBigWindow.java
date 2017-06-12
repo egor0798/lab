@@ -5,33 +5,41 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+import java.io.IOException;
+import java.util.LinkedHashMap;
 
 /**
  * Created by Sekvoya on 012 12.05.17.
  */
 
-public class SWTBigWindow {
+class SWTBigWindow {
 
-    private Collection curcol;
-    private static String path;
+
+    private LinkedHashMap<Integer, Item> curcol;
+    private static String err;
     private Display display;
     private Shell shell;
+    private int pressed;
+    private Client_connection con;
+    private Server_request req_in;
+    private Client_request req_out;
 
-    SWTBigWindow(String p, Collection col){
-        path = p;
+    SWTBigWindow(LinkedHashMap<Integer, Item> col, Client_connection c){
         curcol = col;
-
+        con = c;
     }
-
     public void Bigwin() {
-        display = new Display();
+        req_in = new Server_request(curcol);
+        req_out = new Client_request();
+        new Display();
+        display = Display.getDefault();
         shell = new Shell(display);
         shell.setLocation(120, 120);
         shell.setSize(960, 540);
         shell.setLayout(new FormLayout());
         Color my = new Color(shell.getDisplay(), 225, 252, 152);
         shell.setBackground(my);
-
+        shell.setText("Окно в Европу");
 
         //                              TREE
 
@@ -62,7 +70,7 @@ public class SWTBigWindow {
 
         //                              SCALE
 
-        
+
         FormData sc_data = new FormData();
         sc_data.left = new FormAttachment(68);
         sc_data.right = new FormAttachment(85);
@@ -71,7 +79,9 @@ public class SWTBigWindow {
 
         Scale scale = new Scale(shell, SWT.BORDER);
         scale.setLayoutData(sc_data);
-        scale.setMaximum(40);
+        scale.setSelection(0);
+        scale.setIncrement(1);
+        scale.setMaximum(1000000);
         scale.setPageIncrement(5);
 
 
@@ -88,14 +98,21 @@ public class SWTBigWindow {
         //                              SPINNER
 
         FormData spin_data = new FormData();
-        spin_data.left = new FormAttachment(86);//непрочно
+        spin_data.left = new FormAttachment(86);
         spin_data.right = new FormAttachment(95);
-        // spin_data.bottom = new FormAttachment(65);
         spin_data.top = new FormAttachment(60);
-
         Spinner spinner = new Spinner(shell, SWT.BORDER);
+        scale.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.type == SWT.Selection) {
+                    spinner.setSelection(scale.getSelection());
+                }
+
+            }
+        });
         spinner.setMinimum(0);
-        spinner.setMaximum(10000);
+        spinner.setMaximum(1000000);
         spinner.setSelection(0);
         spinner.setIncrement(1);
         spinner.setPageIncrement(5);
@@ -104,8 +121,8 @@ public class SWTBigWindow {
 
         //                              TEXT DESC
 
-        final Text desc_text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.WRAP);
-         FormData desc_text_data = new FormData();
+        final Text desc_text = new Text(shell, SWT.BORDER | SWT.WRAP );
+        FormData desc_text_data = new FormData();
         desc_text_data.top = new FormAttachment(71);
         desc_text_data.bottom = new FormAttachment(85);
         desc_text_data.left = new FormAttachment(13);
@@ -126,7 +143,7 @@ public class SWTBigWindow {
 
         //                              TEXT NAME
 
-        final Text name_text = new Text(shell, SWT.BORDER | SWT.MULTI | SWT.WRAP);
+        final Text name_text = new Text(shell, SWT.BORDER | SWT.WRAP);
         FormData name_text_data = new FormData();
         name_text_data.top = new FormAttachment(59,4);
         name_text_data.bottom = new FormAttachment(70);
@@ -137,13 +154,17 @@ public class SWTBigWindow {
 
         //                              TEXT NAME LABEL
 
-       Label name_label = new Label(shell, SWT.LEFT);
+        Label name_label = new Label(shell, SWT.LEFT);
         name_label.setText("Name:");
         FormData name_label_data = new FormData();
         name_label_data.right = new FormAttachment(12);
         name_label_data.left = new FormAttachment(5);
         name_label_data.top = new FormAttachment(63,3);
         name_label.setLayoutData(name_label_data);
+
+        bar.setLayoutData(tooldata);
+        bar.pack();
+        shell.setMinimumSize(750,500);
 
 
         //                              TOOLITEM
@@ -155,31 +176,40 @@ public class SWTBigWindow {
             @Override
             public void handleEvent(Event event) {
                 if (event.type == SWT.Selection) {
-                    curcol.put(name_text.getText(), new Item(name_text.getText(), spinner.getDigits(), desc_text.getText()));
-                    curcol.write();
-                    fill_tree(tree, curcol);
+                    Item i =  new Item(name_text.getText().replaceAll("  ",""), Integer.parseInt(spinner.getText()), desc_text.getText().trim());
+                    //fill_tree(tree, curcol);
                     name_text.setText("");
                     desc_text.setText("");
                     spinner.setSelection(0);
-
+                    scale.setSelection(0);
+                    req_out.setCode(4);
+                    req_out.setItem(i);
+                    err = con.send(req_out);
+                    if(err!=null)
+                        msg.show(shell, err);
+                    try {
+                        req_in = (Server_request) con.in.readObject();
+                    }catch (IOException|ClassNotFoundException e1){
+                        msg.show(shell, "Something wrong with connection, please check server");
+                    }
                 }
-
             }
         });
 
-        bar.setLayoutData(tooldata);
-        bar.pack();
-        shell.setMinimumSize(750,500);
 
         ToolItem remove = new ToolItem(bar, SWT.PUSH);
         remove.setText("Remove");
         remove.setToolTipText("Removes selected element");
         remove.addListener(SWT.Selection, new Listener() {
             @Override
-            public void handleEvent(Event event) {
-                if (event.type == SWT.Selection) {
-                    curcol.remove((tree.getSelection()));
-                    //tree.get
+            public void handleEvent(Event event)  {
+                if (event.type == SWT.Selection && tree.getSelectionCount() > 0 ) {
+                    TreeItem t = tree.getSelection()[0];
+                    String s = t.getItems()[0].toString();
+                    s = s.substring(s.indexOf(':')+2, s.indexOf('}'));
+                    curcol.remove(s);
+                    msg.show(shell, "Element removed");
+                    fill_tree(tree, curcol);
                 }
             }
         });
@@ -191,25 +221,61 @@ public class SWTBigWindow {
             @Override
             public void handleEvent(Event event) {
                 if (event.type == SWT.Selection) {
-                    curcol.load(path);
                     fill_tree(tree, curcol);
-                    curcol.write();
                 }
 
             }
         });
 
         ToolItem sort = new ToolItem(bar, SWT.PUSH);
-        sort.setText("Sort");
+        sort.setText("ASCII art");
         sort.setToolTipText("Sorts collection elements by name");
+        sort.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.type == SWT.Selection) {
+
+                }
+
+            }
+        });
 
         ToolItem import_ = new ToolItem(bar, SWT.PUSH);
         import_.setText("Import");
         import_.setToolTipText("Loads collection from file with choosing filepath");
+        import_.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.type == SWT.Selection) {
+                    FileDialog fd = new FileDialog(shell, SWT.OPEN);
+                    fd.setText("Open");
+                    String filterExt ="*.txt";
+                    fd.setFileName(filterExt);
+                    String selected = fd.open();
+                    if(selected != null) {
+                        //msg.show(shell, curcol.load(selected));
+                        fill_tree(tree, curcol);
+                    }
+                }
 
+            }
+        });
         ToolItem remove_l = new ToolItem(bar, SWT.PUSH);
         remove_l.setText("Remove Lower");
         remove_l.setToolTipText("Removes elements which ket smaller than specified key");
+        remove_l.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.type == SWT.Selection && display.getShells().length < 2) {{
+                        SmallWindow sm = new SmallWindow(display);
+                        pressed = sm.show();
+                        if(pressed > 0)
+                            pressed++; // ПЕРЕДЕЛЕТЬ.
+                    }
+                }
+
+            }
+        });
 
 
         shell.open();
@@ -220,7 +286,7 @@ public class SWTBigWindow {
     }
 
 
-    public void fill_tree(Tree tr, Collection col) {
+    private void fill_tree(Tree tr, LinkedHashMap<Integer, Item> col) {
         tr.clearAll(true);
         tr.removeAll();
         for (Item i : col.values()) {
@@ -237,4 +303,5 @@ public class SWTBigWindow {
         }
 
     }
+
 }
