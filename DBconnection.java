@@ -4,14 +4,16 @@
 package com.company;
 
 import java.sql.*;
+import java.util.LinkedHashMap;
 
 public class DBconnection {
 
     static protected Connection connection;
-    protected String url, hostname, database, password, username, tableName;
+    protected String url, hostname, database, password, username;
     protected int port;
+    protected LinkedHashMap<Integer, Item> col;
 
-    public DBconnection(String hostname, int port, String database, String username, String password) throws SQLException {
+    public DBconnection(String hostname, int port, String database, String username, String password, LinkedHashMap<Integer, Item> col) throws SQLException {
         DriverManager.registerDriver(new org.postgresql.Driver());
         String url = "jdbc:postgresql://" + hostname + ":" + port + "/" + database +
                 "?user=" + username + "&password=" + password;
@@ -22,9 +24,10 @@ public class DBconnection {
         this.database = database;
         this.username = username;
         this.password = password;
+        this.col = col;
     }
 
-    public void saveInto(Collection col) throws NullPointerException, SQLException {
+    public LinkedHashMap<Integer, Item> saveInto(LinkedHashMap<Integer, Item> col) throws NullPointerException, SQLException {
         Statement statement = null;
         try {statement = connection.createStatement();}
         catch (SQLException | NullPointerException ex){
@@ -39,9 +42,10 @@ public class DBconnection {
                 System.out.println("Item with equal name already exists");
             }
         }
+        return col;
     }
 
-    public void getColl(Collection col) throws  NullPointerException, SQLException {
+    public LinkedHashMap<Integer, Item> load(LinkedHashMap<Integer, Item> col) throws  NullPointerException, SQLException {
         Statement statement = null;
         try {statement = connection.createStatement();}
         catch (SQLException | NullPointerException ex){
@@ -49,19 +53,54 @@ public class DBconnection {
         }
         ResultSet ans = statement.executeQuery("SELECT * FROM ITEMS;");
         while (ans.next()){
- /* отладочный
-            System.out.println(ans.getString("name") + ' ' + ans.getString("descript") + ' ' +
-                ans.getString("number"));
- */
-            col.put(ans.getString("name"), new Item(ans.getString("name"),
+
+            col.put(Integer.parseInt(ans.getString("item_id")), new Item(ans.getString("name"),
                     Integer.parseInt(ans.getString("number")),
                     ans.getString("descript")));
         }
-/*  отладочный
-        for (Item i: col.values()){
-            System.out.println(i.getName() + ' ' + i.getDesc() + ' ' + i.getNumber());
-        }
-*/
+        return col;
     }
 
+    public LinkedHashMap<Integer, Item> insert(LinkedHashMap<Integer, Item> col, Item it){
+        Statement statement = null;
+        try {statement = connection.createStatement();}
+        catch (SQLException | NullPointerException ex){
+            System.out.println("I can't execute your query");
+        }
+        try {statement.executeUpdate("insert into ITEMS(NAME, DESCRIPT, NUMBER) values (" + "\'" + it.getName() + "\', \'" +
+                it.getDesc() + "\', " + Integer.toString(it.getNumber()) + ");");}
+        catch (SQLException ex){
+            System.out.println("Item with equal name already exists");
+        }
+
+        return col;
+    }
+
+    public LinkedHashMap<Integer, Item> remove(LinkedHashMap<Integer, Item> col, Integer k){
+        Statement statement = null;
+        try {statement = connection.createStatement();}
+        catch (SQLException | NullPointerException ex){
+            System.out.println("I can't execute your query");
+        }
+        try {statement.executeUpdate("DELETE FROM items WHERE item_id = " + Integer.toString(k) + ";");}
+        catch (SQLException ex){
+            System.out.println("Item with equal name already exists");
+        }
+
+        return col;
+    }
+
+    public LinkedHashMap<Integer, Item> removeLower(LinkedHashMap<Integer, Item> col, Integer k){
+        Statement statement = null;
+        try {statement = connection.createStatement();}
+        catch (SQLException | NullPointerException ex){
+            System.out.println("I can't execute your query");
+        }
+        try {statement.executeUpdate("DELETE FROM items WHERE item_id <= " + Integer.toString(k) + ";");}
+        catch (SQLException ex){
+            System.out.println("Item with equal name already exists");
+        }
+
+        return col;
+    }
 }
