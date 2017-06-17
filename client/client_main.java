@@ -1,0 +1,1 @@
+package com.company;import java.util.LinkedHashMap;public class client_main {    public static void main(String[] args) {        LinkedHashMap<Integer, Item> stuff = new LinkedHashMap<>();        Client_connection x = new Client_connection();        SWTBigWindow a = new SWTBigWindow(stuff, x);        a.Bigwin();    }}
