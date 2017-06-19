@@ -16,12 +16,15 @@ public class Client_Handler implements Runnable {
     private DBconnection db;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    Client_Handler(Socket incoming, DBconnection d) throws IOException{
+    private notifayer ntf;
+    Client_Handler(Socket incoming, DBconnection d, notifayer ntf) throws IOException{
         s = incoming;
         db = d;
         in = new ObjectInputStream(s.getInputStream());
         out = new ObjectOutputStream(s.getOutputStream());
+        this.ntf = ntf;
     }
+
 
     public synchronized void run(){
         handle();
@@ -32,14 +35,13 @@ public class Client_Handler implements Runnable {
             while (s.isBound()) {
                 req_in = (Client_request) in.readObject();
                 req_out = choose_action(req_in);
-                out.writeObject(req_out);
-                out.reset();
+                ntf.sendAll(req_out);
             }
+            s.close();
             out.close();
             in.close();
         } catch (SQLException ee) {
             System.out.println("Something wrong with database");
-            ee.printStackTrace();
         } catch (EOFException | SocketException e11) {
             System.out.println("Client disconnected");
         } catch (IOException | ClassNotFoundException e) {
@@ -69,5 +71,10 @@ public class Client_Handler implements Runnable {
                 req_out.setErr(true);
         }
         return req_out;
+    }
+
+    public void send(Server_request sr) throws IOException{
+        out.writeObject(sr);
+        out.reset();
     }
 }

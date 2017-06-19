@@ -8,12 +8,12 @@ import java.util.LinkedHashMap;
 
 public class DBconnection {
 
-    static protected Connection connection;
-    protected String url, hostname, database, password, username;
-    protected int port;
-    protected LinkedHashMap<Integer, Item> col;
+    static Connection connection;
+    private String url, hostname, database, password, username;
+    private int port;
+    LinkedHashMap<Integer, Item> col;
 
-    public DBconnection(String hostname, int port, String database, String username, String password, LinkedHashMap<Integer, Item> col) throws SQLException {
+    DBconnection(String hostname, int port, String database, String username, String password, LinkedHashMap<Integer, Item> col) throws SQLException {
         DriverManager.registerDriver(new org.postgresql.Driver());
         String url = "jdbc:postgresql://" + hostname + ":" + port + "/" + database +
                 "?user=" + username + "&password=" + password;
@@ -28,7 +28,7 @@ public class DBconnection {
     }
 
 
-    public LinkedHashMap<Integer, Item> load() throws  NullPointerException, SQLException {
+    LinkedHashMap<Integer, Item> load() throws  NullPointerException, SQLException {
         Statement statement = null;
         try {statement = connection.createStatement();}
         catch (SQLException | NullPointerException ex){
@@ -36,18 +36,15 @@ public class DBconnection {
         }
         ResultSet ans = statement.executeQuery("SELECT * FROM ITEMS;");
         col.clear();
-        System.out.println(ans.toString());
         while (ans.next()){
             col.put(Integer.parseInt(ans.getString("item_id")), new Item(ans.getString("name"),
                     Integer.parseInt(ans.getString("number")),
                     ans.getString("descript")));
-            System.out.println(ans.getString("item_id"));
         }
-        System.out.println("| " + col.size());
         return col;
     }
 
-    public LinkedHashMap<Integer, Item> insert(Item it){
+    LinkedHashMap<Integer, Item> insert(Item it){
         Statement statement = null;
         try {statement = connection.createStatement();}
         catch (SQLException | NullPointerException ex){
@@ -63,7 +60,7 @@ public class DBconnection {
         return col;
     }
 
-    public LinkedHashMap<Integer, Item> remove(Integer k){
+    LinkedHashMap<Integer, Item> remove(Integer k){
         Statement statement = null;
         try {statement = connection.createStatement();}
         catch (SQLException | NullPointerException ex){
@@ -78,7 +75,7 @@ public class DBconnection {
         return col;
     }
 
-    public LinkedHashMap<Integer, Item> removeLower(Integer k){
+    LinkedHashMap<Integer, Item> removeLower(Integer k){
         Statement statement = null;
         try {statement = connection.createStatement();}
         catch (SQLException | NullPointerException ex){

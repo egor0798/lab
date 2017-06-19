@@ -139,7 +139,6 @@ class SWTBigWindow {
         desc_lab_data.top = new FormAttachment(76);
         desc_label.setLayoutData(desc_lab_data);
 
-
         //                              TEXT NAME
 
         final Text name_text = new Text(shell, SWT.BORDER | SWT.WRAP);
@@ -167,14 +166,6 @@ class SWTBigWindow {
 
 
 
-        //                              FIRST LOAD
-        req_out.setCode(1);
-                    err = con.send(req_out);
-                    if(err!=null)
-                        msg.show(shell, err);
-                    else
-                        receive();
-        
 
 
         //                              TOOLITEM
@@ -194,8 +185,8 @@ class SWTBigWindow {
                 err = con.send(req_out);
                 if(err!=null)
                     msg.show(shell, err);
-                else
-                    receive();
+                //else
+                  //  receive();
             }
         });
 
@@ -206,7 +197,6 @@ class SWTBigWindow {
         remove.addListener(SWT.Selection, event -> {
             if (event.type == SWT.Selection && tree.getSelectionCount() > 0 ) {
                 TreeItem t = tree.getSelection()[0];
-                System.out.println(tree.indexOf(t));
                 int i = 0;
                 for (int a:curcol.keySet()) {
                     if(i == tree.indexOf(t)) {
@@ -219,8 +209,8 @@ class SWTBigWindow {
                 err = con.send(req_out);
                 if(err!=null)
                     msg.show(shell, err);
-                else
-                    receive();
+               // else
+                 //   receive();
             }
         });
 
@@ -233,8 +223,8 @@ class SWTBigWindow {
                 err = con.send(req_out);
                 if(err!=null)
                     msg.show(shell, err);
-                else
-                    receive();
+               // else
+                  //  receive();
             }
 
         });
@@ -253,8 +243,8 @@ class SWTBigWindow {
                         err = con.send(req_out);
                         if(err!=null)
                             msg.show(shell, err);
-                        else
-                            receive();
+                        //else
+                          //  receive();
                     }
                 }
             }
@@ -269,6 +259,27 @@ class SWTBigWindow {
         });
 
         shell.open();
+        Thread t = new Thread(()->{
+            while(true)
+                receive();
+        });
+        t.setDaemon(true);
+        t.start();
+        /*display.asyncExec(()-> {
+                while(true) {
+                    receive();
+                    System.out.println("receive получен");
+                }
+        });*/
+
+        //                              FIRST LOAD
+        req_out.setCode(1);
+        err = con.send(req_out);
+        if(err!=null)
+            msg.show(shell, err);
+        //else
+        //  receive();
+
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch()) display.sleep();
         }
@@ -300,18 +311,18 @@ class SWTBigWindow {
     }
 
     private void receive(){
-            try {
-                req_in = (Server_request) con.in.readObject();
-                if(!req_in.isErr()) {
-                    curcol = req_in.getCol();
-                    System.out.println("| " + req_in.getCol().size());
-                    System.out.println(curcol.size());
+        try {
+            req_in = (Server_request) con.in.readObject();
+            if(!req_in.isErr()) {
+                curcol = req_in.getCol();
+                display.asyncExec(()->{
                     fill_tree(tree, curcol);
-                }else msg.show(shell, "Something wrong with connection, please check server");
-            } catch (IOException |ClassNotFoundException e1) {
-                msg.show(shell, "Something wrong with connection, please check server");
-                e1.printStackTrace();
-            }
+                });
+            }else msg.show(shell, "Something wrong with connection, please check server1");
+        } catch (IOException |ClassNotFoundException e1) {
+            msg.show(shell, "Something wrong with connection, please check server2");
+            e1.printStackTrace();
+        }
     }
 
 }
