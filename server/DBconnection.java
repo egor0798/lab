@@ -93,24 +93,3 @@ public class DBconnection {
         return col;
     }
 }
-
-
-/*
-public LinkedHashMap<Integer, Item> saveInto() throws NullPointerException, SQLException {
-        Statement statement = null;
-        try {statement = connection.createStatement();}
-        catch (SQLException | NullPointerException ex){
-            System.out.println("I can't execute your query");
-        }
-        for (Item i: col.values()) {
-            String str = "insert into ITEMS(NAME, DESCRIPT, NUMBER) values (" + "\'" + i.getName() + "\', \'" +
-                    i.getDesc() + "\', " + Integer.toString(i.getNumber()) + ");";
-    //        System.out.println(str);
-            try {statement.executeUpdate(str);}
-            catch (SQLException ex){
-                System.out.println("Item with equal name already exists");
-            }
-        }
-        return col;
-    }
- */

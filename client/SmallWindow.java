@@ -30,37 +30,29 @@ class SmallWindow {
                 text.setText("");
                 text.setBounds(40, 20, 220, 40);
                 text.setFocus();
-                text.addVerifyListener(new VerifyListener(){
-                    @Override
-                    public void verifyText(VerifyEvent event) {
-                        String allowedCharacters = "0123456789";
-                        String text1 = event.text;
-                        for (int index = 0; index < text1.length(); index++) {
-                            char character = text1.charAt(index);
-                            boolean isAllowed = allowedCharacters.indexOf(character) > -1;
-                            if (!isAllowed) {
-                                event.doit = false;
-                                return;
-                            }
+                text.addVerifyListener(event -> {
+                    String allowedCharacters = "0123456789";
+                    String text1 = event.text;
+                    for (int index = 0; index < text1.length(); index++) {
+                        char character = text1.charAt(index);
+                        boolean isAllowed = allowedCharacters.indexOf(character) > -1;
+                        if (!isAllowed) {
+                            event.doit = false;
+                            return;
                         }
                     }
                 });
-                small.addListener(SWT.Close, new Listener() {
-                    @Override
-                    public void handleEvent(Event event) {
-                        a = -1;
-                        small.dispose();
-                    }
+                small.addListener(SWT.Close, event -> {
+                    a = -1;
+                    small.dispose();
                 });
-                yes.addListener(SWT.Selection, new Listener() {
-                @Override
-                public void handleEvent(Event event) {
+                yes.addListener(SWT.Selection, event -> {
                     if (event.type == SWT.Selection) {
                         a = Integer.parseInt(text.getText()) ;
                         small.dispose();
                     }
 
-                }});
+                });
                 small.open();
                 while (!small.isDisposed()) {
                     if (!display.readAndDispatch()) display.sleep();

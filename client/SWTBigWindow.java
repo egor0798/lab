@@ -29,7 +29,7 @@ class SWTBigWindow {
         curcol = col;
         con = c;
     }
-    public void Bigwin() {
+    void Bigwin() {
         req_in = new Server_request(curcol);
         req_out = new Client_request();
         new Display();
@@ -103,15 +103,13 @@ class SWTBigWindow {
         spin_data.right = new FormAttachment(95);
         spin_data.top = new FormAttachment(60);
         Spinner spinner = new Spinner(shell, SWT.BORDER);
-        scale.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.type == SWT.Selection) {
-                    spinner.setSelection(scale.getSelection());
-                }
-
+        scale.addListener(SWT.Selection, event -> {
+            if (event.type == SWT.Selection) {
+                spinner.setSelection(scale.getSelection());
             }
+
         });
+
         spinner.setMinimum(0);
         spinner.setMaximum(1000000);
         spinner.setSelection(0);
@@ -169,7 +167,7 @@ class SWTBigWindow {
 
 
 
-
+        //                              FIRST LOAD
         req_out.setCode(1);
                     err = con.send(req_out);
                     if(err!=null)
@@ -184,23 +182,20 @@ class SWTBigWindow {
         ToolItem insert = new ToolItem(bar, SWT.PUSH);
         insert.setText("Insert");
         insert.setToolTipText("Write at least element's name so you can add it to collection");
-        insert.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.type == SWT.Selection) {
-                    Item i =  new Item(name_text.getText().replaceAll("  ",""), Integer.parseInt(spinner.getText()), desc_text.getText().trim());
-                    name_text.setText("");
-                    desc_text.setText("");
-                    spinner.setSelection(0);
-                    scale.setSelection(0);
-                    req_out.setCode(4);
-                    req_out.setItem(i);
-                    err = con.send(req_out);
-                    if(err!=null)
-                        msg.show(shell, err);
-                    else
-                        receive();
-                }
+        insert.addListener(SWT.Selection, event -> {
+            if (event.type == SWT.Selection) {
+                Item i =  new Item(name_text.getText().replaceAll("  ",""), Integer.parseInt(spinner.getText()), desc_text.getText().trim());
+                name_text.setText("");
+                desc_text.setText("");
+                spinner.setSelection(0);
+                scale.setSelection(0);
+                req_out.setCode(4);
+                req_out.setItem(i);
+                err = con.send(req_out);
+                if(err!=null)
+                    msg.show(shell, err);
+                else
+                    receive();
             }
         });
 
@@ -208,82 +203,70 @@ class SWTBigWindow {
         ToolItem remove = new ToolItem(bar, SWT.PUSH);
         remove.setText("Remove");
         remove.setToolTipText("Removes selected element");
-        remove.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event)  {
-                if (event.type == SWT.Selection && tree.getSelectionCount() > 0 ) {
-                    /*TreeItem t = tree.getSelection()[0];
-                    System.out.println(t.toString());
-                    String s = t.getItems()[0].toString();
-                    for(int key: curcol.keySet())
-                       if(curcol.get(key).toString().equals(s))
-                           req_out.setKey(key);
-                    req_out.setCode(2);
-                    err = con.send(req_out);
-                    if(err!=null)
-                        msg.show(shell, err);
-                    else
-                        receive();*/
+        remove.addListener(SWT.Selection, event -> {
+            if (event.type == SWT.Selection && tree.getSelectionCount() > 0 ) {
+                TreeItem t = tree.getSelection()[0];
+                System.out.println(tree.indexOf(t));
+                int i = 0;
+                for (int a:curcol.keySet()) {
+                    if(i == tree.indexOf(t)) {
+                        req_out.setKey(a);
+                        break;
+                    }
+                    i++;
                 }
+                req_out.setCode(2);
+                err = con.send(req_out);
+                if(err!=null)
+                    msg.show(shell, err);
+                else
+                    receive();
             }
         });
 
         ToolItem reload = new ToolItem(bar, SWT.PUSH);
         reload.setText("Reload");
         reload.setToolTipText("Reload collection from file");
-        reload.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.type == SWT.Selection) {
-                    req_out.setCode(1);
-                    err = con.send(req_out);
-                    if(err!=null)
-                        msg.show(shell, err);
-                    else
-                        receive();
-                }
-
+        reload.addListener(SWT.Selection, event -> {
+            if (event.type == SWT.Selection) {
+                req_out.setCode(1);
+                err = con.send(req_out);
+                if(err!=null)
+                    msg.show(shell, err);
+                else
+                    receive();
             }
+
         });
 
-
-                                    //                      going to do later
-        /*ToolItem sort = new ToolItem(bar, SWT.PUSH);
-        sort.setText("ASCII art");
-        sort.setToolTipText("Sorts collection elements by name");
-        sort.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.type == SWT.Selection) {
-
-                }
-
-            }
-        });*/
 
         ToolItem remove_l = new ToolItem(bar, SWT.PUSH);
         remove_l.setText("Remove Lower");
         remove_l.setToolTipText("Removes elements which ket smaller than specified key");
-        remove_l.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.type == SWT.Selection && display.getShells().length < 2) {{
-                        SmallWindow sm = new SmallWindow(display);
-                        pressed = sm.show();
-                        if(pressed > 0){
-                            req_out.setCode(3);
-                            req_out.setKey(pressed);
-                            err = con.send(req_out);
-                            if(err!=null)
-                                msg.show(shell, err);
-                            else
-                                receive();
-                        }
+        remove_l.addListener(SWT.Selection, event -> {
+            if (event.type == SWT.Selection && display.getShells().length < 2) {{
+                    SmallWindow sm = new SmallWindow(display);
+                    pressed = sm.show();
+                    if(pressed > 0){
+                        req_out.setCode(3);
+                        req_out.setKey(pressed);
+                        err = con.send(req_out);
+                        if(err!=null)
+                            msg.show(shell, err);
+                        else
+                            receive();
                     }
                 }
             }
         });
 
+        //                      going to do later
+        ToolItem ascii = new ToolItem(bar, SWT.PUSH);
+        ascii.setText("ASCII art");
+        ascii.setToolTipText("Sorts collection elements by name");
+        ascii.addListener(SWT.Selection, event -> {
+            // тут надо будет создавать экземпляр класса, который создаёт аски арт по картинке
+        });
 
         shell.open();
         while (!shell.isDisposed()) {
@@ -324,9 +307,9 @@ class SWTBigWindow {
                     System.out.println("| " + req_in.getCol().size());
                     System.out.println(curcol.size());
                     fill_tree(tree, curcol);
-                }else msg.show(shell, "Something wrong with connection, please check server1");
+                }else msg.show(shell, "Something wrong with connection, please check server");
             } catch (IOException |ClassNotFoundException e1) {
-                msg.show(shell, "Something wrong with connection, please check server2");
+                msg.show(shell, "Something wrong with connection, please check server");
                 e1.printStackTrace();
             }
     }
