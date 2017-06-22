@@ -41,7 +41,7 @@ public class Server implements notifayer{
             try {
                 el.send(sr);
             }catch (IOException e){
-                System.out.println("Error(sendAll)");
+                System.out.println("sendAll");
             }
         });
     }

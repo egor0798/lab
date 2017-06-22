@@ -27,6 +27,9 @@ class Item implements Serializable{
         number = c;
         desc = d;
     }
+    void setDesc(String s ) {   desc = s;    }
+    void setNumber(int a) {    number=a;  }
+    void setName(String s) { name=s;   }
 }
 
 

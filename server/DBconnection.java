@@ -6,6 +6,8 @@ package com.company;
 import java.sql.*;
 import java.util.LinkedHashMap;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+
 public class DBconnection {
 
     static Connection connection;
@@ -54,6 +56,30 @@ public class DBconnection {
                 it.getDesc() + "\', " + Integer.toString(it.getNumber()) + ");");
         }
         catch (SQLException ex){
+            System.out.println("Item with equal name already exists");
+        }
+
+        return col;
+    }
+
+    LinkedHashMap<Integer, Item> update(Item it, int k){
+        Statement statement = null;
+        try {statement = connection.createStatement();}
+        catch (SQLException | NullPointerException ex){
+            System.out.println("I can't execute your query");
+        }
+        try {
+            PreparedStatement prs = connection.prepareStatement("update items set name = ?, descript = ?, number = ? where item_id = ?;",
+                    Statement.RETURN_GENERATED_KEYS);
+            prs.setString(1, it.getName());
+            prs.setString(2, it.getDesc());
+            prs.setInt(3, it.getNumber());
+            prs.setInt(4, k);
+            prs.executeUpdate();
+            System.out.println(prs);
+        }
+        catch (SQLException ex){
+            ex.printStackTrace();
             System.out.println("Item with equal name already exists");
         }
 

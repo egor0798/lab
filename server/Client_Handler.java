@@ -67,6 +67,10 @@ public class Client_Handler implements Runnable {
                 db.insert(r.getItem());
                 req_out.setCol(db.load());
                 break;
+            case 5:
+                db.update(r.getItem(),r.getKey());
+                req_out.setCol(db.load());
+                break;
             default:
                 req_out.setErr(true);
         }

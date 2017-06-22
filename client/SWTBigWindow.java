@@ -40,7 +40,7 @@ class SWTBigWindow {
         shell.setLayout(new FormLayout());
         Color my = new Color(shell.getDisplay(), 225, 252, 152);
         shell.setBackground(my);
-        shell.setText("Окно в Европу");
+        shell.setText("lab_7");
 
         //                              TREE
 
@@ -185,8 +185,6 @@ class SWTBigWindow {
                 err = con.send(req_out);
                 if(err!=null)
                     msg.show(shell, err);
-                //else
-                  //  receive();
             }
         });
 
@@ -209,8 +207,6 @@ class SWTBigWindow {
                 err = con.send(req_out);
                 if(err!=null)
                     msg.show(shell, err);
-               // else
-                 //   receive();
             }
         });
 
@@ -223,8 +219,6 @@ class SWTBigWindow {
                 err = con.send(req_out);
                 if(err!=null)
                     msg.show(shell, err);
-               // else
-                  //  receive();
             }
 
         });
@@ -243,42 +237,77 @@ class SWTBigWindow {
                         err = con.send(req_out);
                         if(err!=null)
                             msg.show(shell, err);
-                        //else
-                          //  receive();
                     }
                 }
             }
         });
 
-        //                      going to do later
-        ToolItem ascii = new ToolItem(bar, SWT.PUSH);
-        ascii.setText("ASCII art");
-        ascii.setToolTipText("Sorts collection elements by name");
-        ascii.addListener(SWT.Selection, event -> {
-            // тут надо будет создавать экземпляр класса, который создаёт аски арт по картинке
-        });
 
-        shell.open();
+
+        ToolItem upd = new ToolItem(bar, SWT.PUSH);
+        upd.setText("Update");
+        upd.setToolTipText("Updates selected element");
+        upd.addListener(SWT.Selection, event -> {
+            if (event.type == SWT.Selection && tree.getSelectionCount() > 0 ) {
+                TreeItem t = tree.getSelection()[0];
+                int i = 0;
+                Item it = null;
+                for (int a:curcol.keySet()) {
+                    if(i == tree.indexOf(t)) {
+                        req_out.setKey(a);
+                        it = curcol.get(a);
+                        break;
+                    }
+                    i++;
+                }
+                try{
+                //desc_text.setText(it.getDesc());
+                //name_text.setText(it.getName());
+                //spinner.setSelection(it.getNumber());
+                    if(!name_text.getText().equals(""))
+                        it.setName(name_text.getText());
+                    if(!desc_text.getText().equals(""))
+                        it.setDesc(desc_text.getText());
+                    it.setNumber(spinner.getSelection());
+                    req_out.setCode(5);
+                    req_out.setItem(it);
+                    err = con.send(req_out);
+                }
+                catch (NullPointerException e){
+                    msg.show(shell,"Choose object");
+                }
+                if(err!=null)
+                    msg.show(shell, err);
+            }
+                });
+
+
+                shell.open();
         Thread t = new Thread(()->{
+            {
+                int i = 0;
+            }
+            i++;
             while(true)
                 receive();
         });
         t.setDaemon(true);
         t.start();
-        /*display.asyncExec(()-> {
-                while(true) {
-                    receive();
-                    System.out.println("receive получен");
-                }
-        });*/
+        Thread tt = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                i =
+            }
 
+            {
+                int i = 0;
+            }
+        });
         //                              FIRST LOAD
         req_out.setCode(1);
         err = con.send(req_out);
         if(err!=null)
             msg.show(shell, err);
-        //else
-        //  receive();
 
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch()) display.sleep();
@@ -320,7 +349,7 @@ class SWTBigWindow {
                 });
             }else msg.show(shell, "Something wrong with connection, please check server1");
         } catch (IOException |ClassNotFoundException e1) {
-            msg.show(shell, "Something wrong with connection, please check server2");
+            //msg.show(shell, "Something wrong with connection, please check server2");
             e1.printStackTrace();
         }
     }

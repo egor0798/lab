@@ -23,7 +23,7 @@ class Client_connection {
             scanner.close();
             a = InetAddress.getByName(addr);              //"192.168.1.122");
             s = new Socket(a,8189);
-            //s.setSoTimeout(500);
+            //s.setSoTimeout(5000);
             out = new ObjectOutputStream(s.getOutputStream());
             in = new ObjectInputStream(s.getInputStream());
         }catch (IOException ee){
