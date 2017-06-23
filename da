@@ -1,0 +1,17 @@
+name=Navn
+descr=Kort beskrivelse
+count=Antal artikler
+winToEu=Vindue til Europa
+insert=Indsatse
+remove=Fjerne
+reload=Opdater
+rem_low=Fjern lavere
+excUnableToConnect=Serveren kan ikke forbinde. Prøv igen senere eller skrive til <egorbirukov1234@gmail.com>
+excCantAccessServ=Noget gik galt, kan ikke få adgang til serveren
+toolTipInsert=Skriv mindst ét navn, så du kan føje til din samling
+toolTipRemove=Fjern det valgte element
+toolTipReload=Opdater i filer
+toolTipRemLower=Fjern elementer, der er mindre end et bestemt nøgle
+excConnection=Der er noget galt med forbindelsen, skal du kontrollere serveren
+language=Sprog
+update=Opdatering
