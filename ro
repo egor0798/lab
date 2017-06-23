@@ -1,0 +1,17 @@
+name=Nume
+descr=Scurtă descriere
+count=Numar de articole
+winToEu=Fereastră spre Europa
+insert=Inserții
+remove=Scoate
+reload=Reincarca
+rem_low=Eliminați mai mici
+excUnableToConnect=Serverul nu se poate conecta. Vă rugăm să încercați din nou mai târziu sau scrie la <egorbirukov1234@gmail.com>
+excCantAccessServ=Ceva a mers prost, nu poate accesa serverul
+toolTipInsert=Scrieți cel puțin un element de nume, astfel încât să puteți adăuga la colecție
+toolTipRemove=Eliminați elementul selectat
+toolTipReload=Reîncarcă din colecția de imagini
+toolTipRemLower=Eliminați elementele care sunt mai puțin de o cheie specificată
+excConnection=E ceva în neregulă cu conexiunea, vă rugăm să verificați serverul
+language=Limba
+update=Actualizare
