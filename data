@@ -1,0 +1,17 @@
+name=Name
+descr=Short description
+count=Count of items
+winToEu=Window to Europe
+insert=INsert
+remove=Remove
+reload=Reload
+rem_low=Remove lower element
+excUnableToConnect=Unable to connect server please try later or write to <egorbirukov1234@gmail.com>
+excCantAccessServ=Something went wrong, can't access server
+toolTipInsert=Write at least element's name so you can add it to collection
+toolTipRemove=Removes selected element
+toolTipReload=Reload collection from file
+toolTipRemLower=Removes elements which are smaller than specified key
+excConnection=Something wrong with connection, check server
+language=Language
+update=Update
