@@ -1,0 +1,17 @@
+name=Ainm
+descr=Cur síos gairid
+count=Líon na n-ítimí
+winToEu=Fuinneog go dtí an Eoraip
+insert=Ionsáigh
+remove=Bain
+reload=Athlódáil
+rem_low=Bain ísle
+excUnableToConnect=Ní féidir freastalaí ceangal. Le do thoil bain triail eile as amach anseo nó scríobh chuig <egorbirukov1234@gmail.com>
+excCantAccessServ=Chuaigh rud éigin mícheart, ní féidir rochtain a fháil ar fhreastalaí
+toolTipInsert=Scríobh ar a laghad eilimint ainm ionas gur féidir leat é a chur le bailiúchán
+toolTipRemove=Bain eilimint roghnaithe
+toolTipReload=Reload bailiúchán ó chomhad
+toolTipRemLower=Bain eilimintí atá níos lú ná eochair sonraithe
+excConnection=Rud éigin cearr le ceangal, seiceáil le do thoil an bhfreastalaí
+language=Teanga
+update=Thabhairt cothrom le dáta
